@@ -240,7 +240,8 @@ def top_perf_utilisateur(max_sr_perf,max_sr_risk):
 
 @st.cache
 def data_load():
-    path = "/home/pierrelouis/Bureau/etf/etf_liste.csv"
+    path="etf_liste.csv"
+    path2 = "/home/pierrelouis/Bureau/etf/etf_liste.csv"
     etf_data = pd.read_csv(path)
     return(etf_data)
     
