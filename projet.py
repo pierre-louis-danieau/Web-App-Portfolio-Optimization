@@ -8,7 +8,6 @@ This is a temporary script file.
 import yfinance as yf #0.1.54
 import streamlit as st
 import numpy as np
-import pandas_datareader as web
 import pandas as pd
 from datetime import datetime
 from pandas_datareader import data as pdr
