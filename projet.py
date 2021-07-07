@@ -321,53 +321,53 @@ def formulaire():
 if __name__ == "__main__":
     
 
-
+    with streamlit_analytics.track():
     
-    col1, col_vide,col2, col_vide2,col3 = st.beta_columns([0.8,0.05,1,0.05,1])
-    
-    ############# 1ere page terminee #############################
-    with col1:
-        st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Screener d'ETF (1)</h2>", unsafe_allow_html=True)
-        duree,invest_init, invest_mens, indice, bouton_calcule,strategie,etf_data=launch_compute()
-    ############ 1ere page terminee #############################
-    
+      col1, col_vide,col2, col_vide2,col3 = st.beta_columns([0.8,0.05,1,0.05,1])
 
-    #st.write('Hello, *World!* :sunglasses:')
-        
+      ############# 1ere page terminee #############################
+      with col1:
+          st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Screener d'ETF (1)</h2>", unsafe_allow_html=True)
+          duree,invest_init, invest_mens, indice, bouton_calcule,strategie,etf_data=launch_compute()
+      ############ 1ere page terminee #############################
 
-    if bouton_calcule==True:
-        #col1, col_vide,col2, col_vide2,col3 = st.beta_columns([2,0.05,1,0.05,1])
 
-    
-        ticker_list=ticker(indice, etf_data)
-        price_data=init_max_date(ticker_list)
-        
-        min_var,max_sr,port_returns,port_risk=simulation(10, price_data)
-        if strategie == 'risque':
-            weigth, perf, risk=min_var[0],min_var[1],min_var[2]
-            perf=np.exp(perf)-1
-        else :
-            weigth, perf, risk=max_sr[0],max_sr[1],max_sr[2]
-            perf=np.exp(perf)-1
-        
-        with col2:
-            st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Allocation optimisée (2)</h2>", unsafe_allow_html=True)
-            st.write("Voici l'allocation optimisée du portefeuille avec les paramètres fournis :")
-            allocation_display(price_data,weigth)
-            st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Planning d'investissement sur 1 an</h2>", unsafe_allow_html=True)
-            planning(price_data,ticker_list,weigth)
-    
-        with col3 :
-            st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Evaluation de cette stratégie (3)</h2>", unsafe_allow_html=True)
-            st.markdown("<h4 style='text-align: center; color: Black;'>La performance annualisée du portefeuille optimisé est de :</h4>", unsafe_allow_html=True)
-            st.markdown("<h3 style='text-align: center; color: LimeGreen;'>{} % !</h3>".format(round(perf*100,2)), unsafe_allow_html=True)
-            st.markdown("<h4 style='text-align: center; color: Black;'>La volatilité annualisée du portefeuille optimisé est de :</h4>", unsafe_allow_html=True)
-            st.markdown("<h3 style='text-align: center; color: LimeGreen;'>{} % !</h3>".format(round(risk*100, 2)), unsafe_allow_html=True)
-            evolution_port_display(duree,perf,invest_init,invest_mens)
-            #top_perf_utilisateur(perf,risk)
-            #st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Ebook ETF</h2>", unsafe_allow_html=True)
+      #st.write('Hello, *World!* :sunglasses:')
 
-            
+
+      if bouton_calcule==True:
+          #col1, col_vide,col2, col_vide2,col3 = st.beta_columns([2,0.05,1,0.05,1])
+
+
+          ticker_list=ticker(indice, etf_data)
+          price_data=init_max_date(ticker_list)
+
+          min_var,max_sr,port_returns,port_risk=simulation(10, price_data)
+          if strategie == 'risque':
+              weigth, perf, risk=min_var[0],min_var[1],min_var[2]
+              perf=np.exp(perf)-1
+          else :
+              weigth, perf, risk=max_sr[0],max_sr[1],max_sr[2]
+              perf=np.exp(perf)-1
+
+          with col2:
+              st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Allocation optimisée (2)</h2>", unsafe_allow_html=True)
+              st.write("Voici l'allocation optimisée du portefeuille avec les paramètres fournis :")
+              allocation_display(price_data,weigth)
+              st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Planning d'investissement sur 1 an</h2>", unsafe_allow_html=True)
+              planning(price_data,ticker_list,weigth)
+
+          with col3 :
+              st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Evaluation de cette stratégie (3)</h2>", unsafe_allow_html=True)
+              st.markdown("<h4 style='text-align: center; color: Black;'>La performance annualisée du portefeuille optimisé est de :</h4>", unsafe_allow_html=True)
+              st.markdown("<h3 style='text-align: center; color: LimeGreen;'>{} % !</h3>".format(round(perf*100,2)), unsafe_allow_html=True)
+              st.markdown("<h4 style='text-align: center; color: Black;'>La volatilité annualisée du portefeuille optimisé est de :</h4>", unsafe_allow_html=True)
+              st.markdown("<h3 style='text-align: center; color: LimeGreen;'>{} % !</h3>".format(round(risk*100, 2)), unsafe_allow_html=True)
+              evolution_port_display(duree,perf,invest_init,invest_mens)
+              #top_perf_utilisateur(perf,risk)
+              #st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Ebook ETF</h2>", unsafe_allow_html=True)
+
+
 
 
 
