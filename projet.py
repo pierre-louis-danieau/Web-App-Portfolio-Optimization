@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from pandas_datareader import data as pdr
+import streamlit_analytics
 
 
 
