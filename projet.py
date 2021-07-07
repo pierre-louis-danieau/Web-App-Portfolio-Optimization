@@ -326,7 +326,11 @@ if __name__ == "__main__":
 
     ############# 1ere page terminee #############################
     with col1:
+        streamlit_analytics.start_tracking()
+        
         st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Screener d'ETF (1)</h2>", unsafe_allow_html=True)
+        
+        streamlit_analytics.stop_tracking()
         duree,invest_init, invest_mens, indice, bouton_calcule,strategie,etf_data=launch_compute()
     ############ 1ere page terminee #############################
 
