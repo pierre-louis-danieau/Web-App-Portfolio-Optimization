@@ -329,7 +329,7 @@ def formulaire():
 
 
 def _max_width_():
-    max_width_str = f"max-width: 1800px;"
+    max_width_str = f"max-width: 1600px;"
     st.markdown(
         f"""
     <style>
