@@ -5,14 +5,12 @@ Spyder Editor
 This is a temporary script file.
 """
 
-import yfinance as yf #0.1.54
+import yfinance as yf 
 import streamlit as st
 import numpy as np
 import pandas as pd
 from datetime import datetime
 from pandas_datareader import data as pdr
-
-
 
 
 import plotly_express as px
@@ -59,7 +57,7 @@ def init_max_date(etfs):
 
 def init_var(num_port, price_data):
   # Simulating 5000 portfolios
-  num_port = 3000
+  num_port = 5000
   # Creating an empty array to store portfolio weights
   all_wts = np.zeros((num_port, len(price_data.columns)))
   # Creating an empty array to store portfolio returns
@@ -104,9 +102,14 @@ def simulation(num_port, price_data):
     return min_var, max_sr, port_returns,port_risk
     
 
-def allocation_display(price_data,weight):
+def allocation_display(price_data,weight,etf_data):
     names = price_data.columns
-    df = pd.Series(weight['Portfolio weights'].values, index=names)
+    num_list=[]
+    for nom in names:
+        num_list.append('NUM_ETF = {}'.format(etf_data[etf_data['TICKER']==nom[:-3]]['NUM_ETF'].tolist()[0]))
+
+        
+    df = pd.Series(weight['Portfolio weights'].values, index=num_list)
       
     fig = px.pie(values=df.values, names=df.index,width=400, height =400)
     st.write(fig)
@@ -159,12 +162,16 @@ def evolution_port_display(duree_future,perf,invest_init, invest_mens):
   val_capital=port['apport'].values[-1]+port['interet'].values[-1]
   st.markdown("<h3 style='text-align: center; color: LimeGreen;'> En {} : Capital total estimé de {} euros !</h3>".format(annee_display, val_capital), unsafe_allow_html=True)
 
+
+
     
 
 
 
 
-def planning(price_data,etfs,weight):
+def planning(price_data,etfs,weight,etf_data):
+    
+    
   mois=['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre','Novembre', 'Décembre']
   month_now=datetime.now().month
   annee1=str(datetime.now().year)
@@ -177,6 +184,11 @@ def planning(price_data,etfs,weight):
     b[i]=b[i] +' ' + annee2
 
   mois_2=a+b
+  num_list=[]
+  for nom in etfs:
+      num_list.append('Nb NUM_ETF={}'.format(etf_data[etf_data['TICKER']==nom[:-3]]['NUM_ETF'].tolist()[0]))
+
+  
   col=[]
   price_unique=pd.DataFrame(price_data.iloc[-1,:].values, index = etfs, columns = ['price'])
   #print(weight['Portfolio weights'])
@@ -204,6 +216,8 @@ def planning(price_data,etfs,weight):
   price_unique.loc["ETF €/an"]=round(price_unique.loc['prix_etf']*price_unique.loc["Nb ETF/an"])
   price_unique=price_unique.drop('prix_etf')
   price_unique=price_unique.astype('int32')
+  price_unique.columns=num_list
+  
   
   st.dataframe(price_unique)
 
@@ -240,13 +254,13 @@ def top_perf_utilisateur(max_sr_perf,max_sr_risk):
 
 @st.cache
 def data_load():
-    path="etf_liste.csv"
-    path2 = "/home/pierrelouis/Bureau/etf/etf_liste.csv"
+    path = "/home/pierrelouis/Bureau/etf/etf_liste.csv"
     etf_data = pd.read_csv(path)
+    etf_data.drop('ISIN', axis=1, inplace=True)
     return(etf_data)
     
 def filtre(etf_data):
-    col=['FISCAL','REGIONS','STRATEGIES']
+    col=['FISCAL','REGIONS','STRATEGIE']
     my_expander = st.beta_expander(label='Clique ici pour filtrer tes ETF')
     with my_expander:
         fiscal=st.selectbox("Enveloppe fiscale : ",options=['TOUT']+list(etf_data[col[0]].unique()) )
@@ -266,7 +280,7 @@ def filtre(etf_data):
 def portefeuille(etf_data):
     st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Selection de ton portefeuille</h2>", unsafe_allow_html=True)
     st.write("Indique ci-dessous les numéros des ETF pris en compte pour l'optimisation (cf screener ci-dessus) : ")
-    indice = st.multiselect(' ', list(etf_data['NUMERO_ETF']))
+    indice = st.multiselect(' ', list(etf_data['NUM_ETF']))
     etf_port_indice = etf_data.loc[indice]
     st.write(' ')
     st.write("Ton portefeuille actuel :")
@@ -277,7 +291,7 @@ def portefeuille(etf_data):
 def ticker(indice, etf_data):
     ticker=[]
     for i in indice:
-        ticker.append(etf_data[etf_data['NUMERO_ETF'] == i]['TICKER'].values.tolist()[0]+'.PA')
+        ticker.append(etf_data[etf_data['NUM_ETF'] == i]['TICKER'].values.tolist()[0]+'.PA')
 
     return(ticker)
 
@@ -297,7 +311,6 @@ def initialisation():
     else :
         strategie="perf"
         
-    formulaire()
         
     return(duree, invest_init, invest_mens,strategie)
 
@@ -311,9 +324,8 @@ def launch_compute():
     return(duree,invest_init, invest_mens, indice, bouton_calcule,strategie,etf_data)
     
 def formulaire():
-    st.sidebar.subheader("Restons en contact")
-    html='<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfzR9YfAJ1bsDZWq0Tw9jme20UFeUoiFfZ8OnoePwGpmLGeLg/viewform?embedded=true" width="300" height="300" frameborder="0" marginheight="0" marginwidth="0">Chargement…</iframe>'
-    st.sidebar.markdown(html, unsafe_allow_html=True)
+    html='<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfzR9YfAJ1bsDZWq0Tw9jme20UFeUoiFfZ8OnoePwGpmLGeLg/viewform?embedded=true" width="500" height="300" frameborder="0" marginheight="0" marginwidth="0">Chargement…</iframe>'
+    st.markdown(html, unsafe_allow_html=True)
 
 
     
@@ -322,28 +334,24 @@ def formulaire():
 if __name__ == "__main__":
     
 
+
     
     col1, col_vide,col2, col_vide2,col3 = st.beta_columns([0.8,0.05,1,0.05,1])
-
+    
     ############# 1ere page terminee #############################
     with col1:
-        
         st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Screener d'ETF (1)</h2>", unsafe_allow_html=True)
-
         duree,invest_init, invest_mens, indice, bouton_calcule,strategie,etf_data=launch_compute()
     ############ 1ere page terminee #############################
-
+    
 
     #st.write('Hello, *World!* :sunglasses:')
+        
+    ticker_list=ticker(indice, etf_data)
+    if bouton_calcule==True and len(ticker_list)!=0:
 
-
-    if bouton_calcule==True:
-        #col1, col_vide,col2, col_vide2,col3 = st.beta_columns([2,0.05,1,0.05,1])
-
-
-        ticker_list=ticker(indice, etf_data)
         price_data=init_max_date(ticker_list)
-
+        
         min_var,max_sr,port_returns,port_risk=simulation(10, price_data)
         if strategie == 'risque':
             weigth, perf, risk=min_var[0],min_var[1],min_var[2]
@@ -351,14 +359,16 @@ if __name__ == "__main__":
         else :
             weigth, perf, risk=max_sr[0],max_sr[1],max_sr[2]
             perf=np.exp(perf)-1
-
+        
         with col2:
             st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Allocation optimisée (2)</h2>", unsafe_allow_html=True)
             st.write("Voici l'allocation optimisée du portefeuille avec les paramètres fournis :")
-            allocation_display(price_data,weigth)
+            allocation_display(price_data,weigth,etf_data)
             st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Planning d'investissement sur 1 an</h2>", unsafe_allow_html=True)
-            planning(price_data,ticker_list,weigth)
+            planning(price_data,ticker_list,weigth, etf_data)
+            
 
+    
         with col3 :
             st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Evaluation de cette stratégie (3)</h2>", unsafe_allow_html=True)
             st.markdown("<h4 style='text-align: center; color: Black;'>La performance annualisée du portefeuille optimisé est de :</h4>", unsafe_allow_html=True)
@@ -368,10 +378,14 @@ if __name__ == "__main__":
             evolution_port_display(duree,perf,invest_init,invest_mens)
             #top_perf_utilisateur(perf,risk)
             #st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Ebook ETF</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center; color: RoyalBlue;'>Restons en contact</h2>", unsafe_allow_html=True)
+            formulaire()
 
 
-
-
+            
+    elif bouton_calcule==True and len(ticker_list)==0:
+        with col1:
+            st.write("Attention : Indique les numéros d'ETF qui composent ton portefeuille avant l'optimisation.")
 
 
 
