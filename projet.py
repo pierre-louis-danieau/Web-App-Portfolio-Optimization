@@ -15,7 +15,7 @@ from pandas_datareader import data as pdr
 
 import plotly_express as px
 
-st.set_page_config(page_title="Optimisation d'un portefeuille d'ETF ",page_icon="🎯",layout="wide",initial_sidebar_state="expanded")
+st.set_page_config(page_title="Optimisation d'un portefeuille d'ETF ",page_icon="🎯",layout="wide",initial_sidebar_state="auto")
 
 st.markdown("<h1 style='text-align: center; color: Navy;'>Optimisation à visée éducative d'un portefeuille d'ETF </h1>", unsafe_allow_html=True)
 
@@ -328,13 +328,25 @@ def formulaire():
     st.markdown(html, unsafe_allow_html=True)
 
 
-    
+def _max_width_():
+    max_width_str = f"max-width: 1800px;"
+    st.markdown(
+        f"""
+    <style>
+    .reportview-container .main .block-container{{
+        {max_width_str}
+    }}
+    </style>    
+    """,
+        unsafe_allow_html=True,
+    )
+      
 
 
 if __name__ == "__main__":
     
 
-
+    _max_width_()
     
     col1, col_vide,col2, col_vide2,col3 = st.beta_columns([0.8,0.05,1,0.05,1])
     
