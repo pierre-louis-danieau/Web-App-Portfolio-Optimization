@@ -1,6 +1,6 @@
 # ETF Screener avec Streamlit
 
-The web app was built in Python using the following libraries:
+Développement d'une application web pour de l'optimisation de portefeuille avec :
 * streamlit
 * pandas
 * numpy
