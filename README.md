@@ -1,7 +1,7 @@
 # ETF Screener with Streamlit
 
-- Development of a web application for ETF portfolio optimization with streamlit
-- Real time data thanks to the Yahoo Finance API
+- Development of a web application for ETF portfolio optimization with streamlit.
+- Real time data thanks to the Yahoo Finance API.
 
 Algorithms used: Monte carlo simulation / Markowitz portfolio optimization
 
